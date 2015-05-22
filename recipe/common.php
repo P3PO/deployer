@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,19 +16,19 @@ set('shared_files', []);
 set('writable_dirs', []);
 set('writable_use_sudo', true); // Using sudo in writable commands?
 
-/**
+/*
  * Environment vars
  */
 env('branch', ''); // Branch to deploy.
 env('env_vars', ''); // For Composer installation. Like SYMFONY_ENV=prod
 
-/**
+/*
  * Default arguments and options.
  */
 argument('stage', \Symfony\Component\Console\Input\InputArgument::OPTIONAL, 'Run tasks only on this server or group of servers.');
 option('tag', null, \Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL, 'Tag to deploy.');
 
-/**
+/*
  * Rollback to previous release.
  */
 task('rollback', function () {
@@ -45,12 +47,11 @@ task('rollback', function () {
             writeln("Rollback to `{$releases[1]}` release was successful.");
         }
     } else {
-        writeln("<comment>No more releases you can revert to.</comment>");
+        writeln('<comment>No more releases you can revert to.</comment>');
     }
 })->desc('Rollback to previous release');
 
-
-/**
+/*
  * Preparing server for deployment.
  */
 task('deploy:prepare', function () {
@@ -64,31 +65,31 @@ task('deploy:prepare', function () {
         $formatter = \Deployer\Deployer::get()->getHelper('formatter');
 
         $errorMessage = [
-            "Shell on your server is not POSIX-compliant. Please change to sh, bash or similar.",
-            "Usually, you can change your shell to bash by running: chsh -s /bin/bash",
+            'Shell on your server is not POSIX-compliant. Please change to sh, bash or similar.',
+            'Usually, you can change your shell to bash by running: chsh -s /bin/bash',
         ];
         write($formatter->formatBlock($errorMessage, 'error', true));
 
         throw $e;
     }
-    
+
     run('if [ ! -d {{deploy_path}} ]; then echo ""; fi');
 
     // Create releases dir.
-    run("cd {{deploy_path}} && if [ ! -d releases ]; then mkdir releases; fi");
+    run('cd {{deploy_path}} && if [ ! -d releases ]; then mkdir releases; fi');
 
     // Create shared dir.
-    run("cd {{deploy_path}} && if [ ! -d shared ]; then mkdir shared; fi");
+    run('cd {{deploy_path}} && if [ ! -d shared ]; then mkdir shared; fi');
 })->desc('Preparing server for deploy');
 
-/**
+/*
  * Return release path.
  */
 env('release_path', function () {
-    return str_replace("\n", '', run("readlink {{deploy_path}}/release"));
+    return str_replace("\n", '', run('readlink {{deploy_path}}/release'));
 });
 
-/**
+/*
  * Release
  */
 task('deploy:release', function () {
@@ -98,18 +99,17 @@ task('deploy:release', function () {
 
     $i = 0;
     while (is_dir(env()->parse($releasePath)) && $i < 42) {
-        $releasePath .= '.' . ++$i;
+        $releasePath .= '.'.++$i;
     }
 
     run("mkdir $releasePath");
 
-    run("cd {{deploy_path}} && if [ -h release ]; then rm release; fi");
+    run('cd {{deploy_path}} && if [ -h release ]; then rm release; fi');
 
     run("ln -s $releasePath {{deploy_path}}/release");
 })->desc('Prepare release');
 
-
-/**
+/*
  * Update project code
  */
 task('deploy:update_code', function () {
@@ -122,7 +122,7 @@ task('deploy:update_code', function () {
     $at = '';
     if (!empty($tag)) {
         $at = "-b $tag";
-    } else if (!empty($branch)) {
+    } elseif (!empty($branch)) {
         $at = "-b $branch";
     }
 
@@ -130,12 +130,11 @@ task('deploy:update_code', function () {
 
 })->desc('Updating code');
 
-
-/**
+/*
  * Create symlinks for shared directories and files.
  */
 task('deploy:shared', function () {
-    $sharedPath = "{{deploy_path}}/shared";
+    $sharedPath = '{{deploy_path}}/shared';
 
     foreach (get('shared_dirs') as $dir) {
         // Remove from source
@@ -157,7 +156,7 @@ task('deploy:shared', function () {
         run("if [ -d $(echo {{release_path}}/$file) ]; then rm -rf {{release_path}}/$file; fi");
 
         // Create dir of shared file
-        run("mkdir -p $sharedPath/" . dirname($file));
+        run("mkdir -p $sharedPath/".dirname($file));
 
         // Touch shared
         run("touch $sharedPath/$file");
@@ -167,50 +166,42 @@ task('deploy:shared', function () {
     }
 })->desc('Creating symlinks for shared files');
 
-
-/**
+/*
  * Make writable dirs.
  */
 task('deploy:writable', function () {
-    $dirs = join(' ', get('writable_dirs'));
+    $dirs = implode(' ', get('writable_dirs'));
     $sudo = get('writable_use_sudo') ? 'sudo' : '';
 
     if (!empty($dirs)) {
-
         try {
             $httpUser = run("ps aux | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1")->toString();
 
             cd('{{release_path}}');
 
-            if (strpos(run("chmod 2>&1; true"), '+a') !== false) {
-
+            if (strpos(run('chmod 2>&1; true'), '+a') !== false) {
                 if (!empty($httpUser)) {
                     run("$sudo chmod +a \"$httpUser allow delete,write,append,file_inherit,directory_inherit\" $dirs");
                 }
 
                 run("$sudo chmod +a \"`whoami` allow delete,write,append,file_inherit,directory_inherit\" $dirs");
-
             } elseif (commandExist('setfacl')) {
-
                 if (!empty($httpUser)) {
                     run("$sudo setfacl -R -m u:\"$httpUser\":rwX -m u:`whoami`:rwX $dirs");
                     run("$sudo setfacl -dR -m u:\"$httpUser\":rwX -m u:`whoami`:rwX $dirs");
                 } else {
                     run("$sudo chmod 777 $dirs");
                 }
-
-
             } else {
                 run("$sudo chmod 777 $dirs");
             }
-
         } catch (\RuntimeException $e) {
             $formatter = \Deployer\Deployer::get()->getHelper('formatter');
 
             $errorMessage = [
-                "Unable to setup correct permissions for writable dirs.                  ",
+                'Unable to setup correct permissions for writable dirs.                  ',
                 "You need co configure sudo's sudoers files to don't prompt for password,",
-                "or setup correct permissions manually.                                  ",
+                'or setup correct permissions manually.                                  ',
             ];
             write($formatter->formatBlock($errorMessage, 'error', true));
 
@@ -220,15 +211,14 @@ task('deploy:writable', function () {
 
 })->desc('Make writable dirs');
 
-
-/**
+/*
  * Installing vendors tasks.
  */
 task('deploy:vendors', function () {
     if (commandExist('composer')) {
         $composer = 'composer';
     } else {
-        run("cd {{release_path}} && curl -sS https://getcomposer.org/installer | php");
+        run('cd {{release_path}} && curl -sS https://getcomposer.org/installer | php');
         $composer = 'php composer.phar';
     }
 
@@ -236,17 +226,15 @@ task('deploy:vendors', function () {
 
 })->desc('Installing vendors');
 
-
-/**
+/*
  * Create symlink to last release.
  */
 task('deploy:symlink', function () {
-    run("cd {{deploy_path}} && ln -sfn {{release_path}} current"); // Atomic override symlink.
-    run("cd {{deploy_path}} && rm release"); // Remove release link.
+    run('cd {{deploy_path}} && ln -sfn {{release_path}} current'); // Atomic override symlink.
+    run('cd {{deploy_path}} && rm release'); // Remove release link.
 })->desc('Creating symlink to release');
 
-
-/**
+/*
  * Return list of releases on server.
  */
 env('releases_list', function () {
@@ -257,23 +245,21 @@ env('releases_list', function () {
     return $list;
 });
 
-
-/**
+/*
  * Return current release path.
  */
 env('current', function () {
-    return run("readlink {{deploy_path}}/current")->toString();
+    return run('readlink {{deploy_path}}/current')->toString();
 });
 
-/**
+/*
  * Show current release number.
  */
 task('current', function () {
-    writeln('Current release: ' . basename(env('current')));
+    writeln('Current release: '.basename(env('current')));
 })->desc('Show current release.');
 
-
-/**
+/*
  * Cleanup old releases.
  */
 task('cleanup', function () {
@@ -290,17 +276,16 @@ task('cleanup', function () {
         run("rm -rf {{deploy_path}}/releases/$release");
     }
 
-    run("cd {{deploy_path}} && if [ -e release ]; then rm release; fi");
-    run("cd {{deploy_path}} && if [ -h release ]; then rm release; fi");
+    run('cd {{deploy_path}} && if [ -e release ]; then rm release; fi');
+    run('cd {{deploy_path}} && if [ -h release ]; then rm release; fi');
 
 })->desc('Cleaning up old releases');
 
-
-/**
+/*
  * Success message
  */
 task('success', function () {
-    writeln("<info>Successfully deployed!</info>");
+    writeln('<info>Successfully deployed!</info>');
 })
     ->once()
     ->setPrivate();

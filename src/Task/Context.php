@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -41,8 +43,8 @@ class Context
 
     /**
      * @param ServerInterface|null $server
-     * @param Environment|null $env
-     * @param InputInterface|null $input
+     * @param Environment|null     $env
+     * @param InputInterface|null  $input
      * @param OutputInterface|null $output
      */
     public function __construct($server, $env, $input, $output)
@@ -68,7 +70,7 @@ class Context
     {
         return end(self::$contexts);
     }
-    
+
     /**
      * @return Context
      */

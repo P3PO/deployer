@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +18,7 @@ class OutputWatcher implements OutputInterface
      * @var OutputInterface
      */
     private $output;
-    
+
     /**
      * @var bool
      */
@@ -104,7 +106,7 @@ class OutputWatcher implements OutputInterface
     }
 
     /**
-     * @param boolean $wasWritten
+     * @param bool $wasWritten
      */
     public function setWasWritten($wasWritten)
     {
@@ -112,7 +114,7 @@ class OutputWatcher implements OutputInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getWasWritten()
     {

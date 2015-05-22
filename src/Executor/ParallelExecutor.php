@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -120,7 +122,7 @@ class ParallelExecutor implements ExecutorInterface
     {
         $this->userDefinition = $userDefinition;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -160,25 +162,24 @@ class ParallelExecutor implements ExecutorInterface
             $this->pure->run();
         } catch (ConnectionException $exception) {
             // If port is already used, try with another one.
-            $output->writeln("<error>" . $exception->getMessage() . "</error>");
+            $output->writeln('<error>'.$exception->getMessage().'</error>');
 
             if (++$this->port <= self::STOP_PORT) {
                 goto connect;
             }
         }
-
     }
 
     /**
-     * Start workers, put master port, server name to run on, and options stuff. 
+     * Start workers, put master port, server name to run on, and options stuff.
      */
     public function startWorkers()
     {
         $input = [
-            '--master' => '127.0.0.1:' . $this->port,
+            '--master' => '127.0.0.1:'.$this->port,
             '--server' => '',
         ];
-        
+
         // Get verbosity.
         $verbosity = new VerbosityString($this->output);
 
@@ -192,19 +193,19 @@ class ParallelExecutor implements ExecutorInterface
 
         // Get user options.
         foreach ($this->userDefinition->getOptions() as $option) {
-            $input["--" . $option->getName()] = $this->input->getOption($option->getName());
+            $input['--'.$option->getName()] = $this->input->getOption($option->getName());
         }
-        
+
         foreach ($this->servers as $serverName => $server) {
             $input['--server'] = $serverName;
-            
+
             $process = new Process(
-                "php " . DEPLOYER_BIN .
-                (null === $deployPhpFile ? "" : " --file=$deployPhpFile") .
-                " worker " .
-                new ArrayInput($input) .
-                " $verbosity" .
-                " &"
+                'php '.DEPLOYER_BIN.
+                (null === $deployPhpFile ? '' : " --file=$deployPhpFile").
+                ' worker '.
+                new ArrayInput($input).
+                " $verbosity".
+                ' &'
             );
             $process->disableOutput();
             $process->run();
@@ -221,13 +222,14 @@ class ParallelExecutor implements ExecutorInterface
 
             $format = function ($message) use ($server) {
                 $message = rtrim($message, "\n");
+
                 return implode("\n", array_map(function ($text) use ($server) {
                     return "[$server] $text";
                 }, explode("\n", $message)));
 
             };
 
-            $this->output->writeln(array_map($format, (array)$messages), $type);
+            $this->output->writeln(array_map($format, (array) $messages), $type);
         }
     }
 
@@ -244,12 +246,11 @@ class ParallelExecutor implements ExecutorInterface
 
             // We got some exception, so not.
             $this->isSuccessfullyFinished = false;
-            
+
             if ($exceptionClass == 'Deployer\Task\NonFatalException') {
 
-                // If we got NonFatalException, continue other tasks. 
+                // If we got NonFatalException, continue other tasks.
                 $this->hasNonFatalException = true;
-
             } else {
 
                 // Do not run other task.
@@ -257,7 +258,7 @@ class ParallelExecutor implements ExecutorInterface
                 $this->tasks = [];
 
                 // Worker will not mark this task as done (remove self server name from `tasks_to_do` list),
-                // so to finish current task execution we need to manually remove it from that list. 
+                // so to finish current task execution we need to manually remove it from that list.
                 $taskToDoStorage = $this->pure->getStorage('tasks_to_do');
                 $taskToDoStorage->delete($serverName);
             }
@@ -266,7 +267,7 @@ class ParallelExecutor implements ExecutorInterface
 
     /**
      * Action time for master! Send tasks `to-do` for workers and go to sleep.
-     * Also decide when to stop server/loop. 
+     * Also decide when to stop server/loop.
      */
     public function sendTasks()
     {
@@ -300,7 +301,6 @@ class ParallelExecutor implements ExecutorInterface
 
                     $this->wait = true;
                 }
-
             } else {
                 $this->loop->stop();
             }
@@ -328,9 +328,9 @@ class ParallelExecutor implements ExecutorInterface
                 } else {
                     $this->informer->taskError($this->hasNonFatalException);
                 }
-                
+
                 // We waited all workers to finish their tasks.
-                // Wait no more! 
+                // Wait no more!
                 $this->wait = false;
 
                 // Reset to default for next tasks.

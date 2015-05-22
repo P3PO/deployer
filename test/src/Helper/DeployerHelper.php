@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -54,7 +56,7 @@ trait DeployerHelper
         }
 
         $servers = [
-            'first' => $this->getMockBuilder('Deployer\Server\ServerInterface')->disableOriginalConstructor()->getMock(),
+            'first'  => $this->getMockBuilder('Deployer\Server\ServerInterface')->disableOriginalConstructor()->getMock(),
             'second' => $this->getMockBuilder('Deployer\Server\ServerInterface')->disableOriginalConstructor()->getMock(),
         ];
 
@@ -65,7 +67,7 @@ trait DeployerHelper
         }
 
         $environments = [
-            'first' => $this->getMockBuilder('Deployer\Server\Environment')->disableOriginalConstructor()->getMock(),
+            'first'  => $this->getMockBuilder('Deployer\Server\Environment')->disableOriginalConstructor()->getMock(),
             'second' => $this->getMockBuilder('Deployer\Server\Environment')->disableOriginalConstructor()->getMock(),
         ];
 
@@ -74,7 +76,7 @@ trait DeployerHelper
         foreach ($environments as $name => $env) {
             $deployer->environments[$name] = $env;
         }
-        
+
         return [$deployer, $tasks, $servers, $environments, $input, $output];
     }
-} 
+}

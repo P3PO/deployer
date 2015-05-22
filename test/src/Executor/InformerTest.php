@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -7,7 +9,6 @@
 
 namespace Deployer\Executor;
 
-use Deployer\Task\NonFatalException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class InformerTest extends \PHPUnit_Framework_TestCase
@@ -68,7 +69,7 @@ class InformerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['writeln', 'getVerbosity'])
             ->getMock();
 
-        $output->expects($this->once()) 
+        $output->expects($this->once())
             ->method('writeln')
             ->with($this->equalTo('<fg=yellow>✘</fg=yellow> Some errors occurred!'));
 
@@ -76,4 +77,3 @@ class InformerTest extends \PHPUnit_Framework_TestCase
         $informer->taskError(true);
     }
 }
-

@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +13,11 @@ class CommonTest extends RecipeTester
 {
     protected function loadRecipe()
     {
-        require __DIR__ . '/../../recipe/common.php';
+        require __DIR__.'/../../recipe/common.php';
 
         // Override update code task to use local copy.
         task('deploy:update_code', function () {
-            runLocally('cp -R ' . __DIR__ . '/../fixture/app/. {{release_path}}');
+            runLocally('cp -R '.__DIR__.'/../fixture/app/. {{release_path}}');
         });
     }
 
@@ -23,21 +25,21 @@ class CommonTest extends RecipeTester
     {
         $this->exec('deploy:prepare');
 
-        $this->assertFileExists(self::$deployPath . '/releases');
-        $this->assertFileExists(self::$deployPath . '/shared');
+        $this->assertFileExists(self::$deployPath.'/releases');
+        $this->assertFileExists(self::$deployPath.'/shared');
     }
 
     public function testRelease()
     {
         $this->exec('deploy:release');
 
-        $this->assertFileExists(self::$deployPath . '/release');
+        $this->assertFileExists(self::$deployPath.'/release');
     }
 
     public function testReleaseSymlink()
     {
-        $removedDirectory = self::$deployPath . '/directory';
-        $releaseSymlink = self::$deployPath . '/release';
+        $removedDirectory = self::$deployPath.'/directory';
+        $releaseSymlink = self::$deployPath.'/release';
 
         mkdir($removedDirectory);
         unlink($releaseSymlink);
@@ -56,7 +58,7 @@ class CommonTest extends RecipeTester
 
         $this->exec('deploy:update_code');
 
-        $this->assertFileExists($this->getEnv('release_path') . '/README.md');
+        $this->assertFileExists($this->getEnv('release_path').'/README.md');
     }
 
     public function testShared()
@@ -67,16 +69,16 @@ class CommonTest extends RecipeTester
         $this->exec('deploy:shared');
 
         $this->assertEquals(
-            realpath($this->getEnv('release_path') . '/app/logs'),
-            $this->getEnv('deploy_path') . '/shared/app/logs'
+            realpath($this->getEnv('release_path').'/app/logs'),
+            $this->getEnv('deploy_path').'/shared/app/logs'
         );
         $this->assertEquals(
-            realpath($this->getEnv('release_path') . '/app/config/parameters.yml'),
-            $this->getEnv('deploy_path') . '/shared/app/config/parameters.yml'
+            realpath($this->getEnv('release_path').'/app/config/parameters.yml'),
+            $this->getEnv('deploy_path').'/shared/app/config/parameters.yml'
         );
 
-        $this->assertTrue(is_dir($this->getEnv('deploy_path') . '/shared/app/logs'));
-        $this->assertFileExists($this->getEnv('deploy_path') . '/shared/app/config/parameters.yml');
+        $this->assertTrue(is_dir($this->getEnv('deploy_path').'/shared/app/logs'));
+        $this->assertFileExists($this->getEnv('deploy_path').'/shared/app/config/parameters.yml');
     }
 
     public function testWriteable()
@@ -85,24 +87,24 @@ class CommonTest extends RecipeTester
 
         $this->exec('deploy:writable');
 
-        $this->assertTrue(is_writable($this->getEnv('release_path') . '/app/cache'));
-        $this->assertTrue(is_writable($this->getEnv('release_path') . '/app/logs'));
+        $this->assertTrue(is_writable($this->getEnv('release_path').'/app/cache'));
+        $this->assertTrue(is_writable($this->getEnv('release_path').'/app/logs'));
     }
 
     public function testVendor()
     {
         $this->exec('deploy:vendors');
 
-        $this->assertFileExists($this->getEnv('release_path') . '/vendor/autoload.php');
+        $this->assertFileExists($this->getEnv('release_path').'/vendor/autoload.php');
     }
 
     public function testSymlink()
     {
         $this->exec('deploy:symlink');
 
-        $this->assertTrue(realpath($this->getEnv('deploy_path') . '/current') !== false);
-        clearstatcache($this->getEnv('deploy_path') . '/release');
-        $this->assertFalse(realpath($this->getEnv('deploy_path') . '/release') !== false, 'Symlink to release directory must gone after deploy:symlink.');
+        $this->assertTrue(realpath($this->getEnv('deploy_path').'/current') !== false);
+        clearstatcache($this->getEnv('deploy_path').'/release');
+        $this->assertFalse(realpath($this->getEnv('deploy_path').'/release') !== false, 'Symlink to release directory must gone after deploy:symlink.');
     }
 
     public function testCurrent()
@@ -110,7 +112,7 @@ class CommonTest extends RecipeTester
         $this->exec('current');
 
         $this->assertEquals(
-            realpath($this->getEnv('deploy_path') . '/current'),
+            realpath($this->getEnv('deploy_path').'/current'),
             $this->getEnv('current')
         );
     }
@@ -129,7 +131,7 @@ class CommonTest extends RecipeTester
 
         $this->exec('cleanup');
 
-        $fi = new FilesystemIterator($this->getEnv('deploy_path') . '/releases', FilesystemIterator::SKIP_DOTS);
+        $fi = new FilesystemIterator($this->getEnv('deploy_path').'/releases', FilesystemIterator::SKIP_DOTS);
         $this->assertEquals(3, iterator_count($fi));
     }
 
@@ -140,7 +142,7 @@ class CommonTest extends RecipeTester
     {
         $this->exec('rollback');
 
-        $fi = new FilesystemIterator($this->getEnv('deploy_path') . '/releases', FilesystemIterator::SKIP_DOTS);
+        $fi = new FilesystemIterator($this->getEnv('deploy_path').'/releases', FilesystemIterator::SKIP_DOTS);
         $this->assertEquals(2, iterator_count($fi));
     }
 }

@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +20,7 @@ class TaskTest extends \PHPUnit_Framework_TestCase
         $task = new Task(function () use ($mock) {
             $mock->callback();
         });
-        
+
         $context = $this->getMockBuilder('Deployer\Task\Context')->disableOriginalConstructor()->getMock();
 
         $task->run($context);
@@ -35,7 +37,7 @@ class TaskTest extends \PHPUnit_Framework_TestCase
 
         $task->onlyOn([]);
         $this->assertTrue($task->runOnServer('server'));
-        
+
         $task->setPrivate();
         $this->assertTrue($task->isPrivate());
     }

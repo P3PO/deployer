@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -120,7 +122,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $b = new Builder($config, $env);
         $b->env('name', 'value');
     }
-    
+
     public function testForwardAgent()
     {
         $config = $this->getMockBuilder('Deployer\Server\Configuration')->disableOriginalConstructor()->getMock();

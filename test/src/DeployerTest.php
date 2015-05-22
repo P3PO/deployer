@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,7 +14,7 @@ use Deployer\Console\Application;
 class DeployerTest extends \PHPUnit_Framework_TestCase
 {
     private $deployer;
-    
+
     protected function setUp()
     {
         $console = new Application();
@@ -20,7 +22,6 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
         $output = $this->getMock('Symfony\Component\Console\Output\OutputInterface');
         $this->deployer = new Deployer($console, $input, $output);
     }
-
 
     protected function tearDown()
     {
@@ -38,7 +39,7 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testInstance()
-    {  
+    {
         $this->assertEquals($this->deployer, Deployer::get());
     }
 
@@ -58,4 +59,3 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
         $this->deployer->some_collection;
     }
 }
- 

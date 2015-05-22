@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -62,6 +64,7 @@ class Scenario
 
     /**
      * Get before tasks names.
+     *
      * @return string[]
      */
     protected function getBefore()
@@ -70,11 +73,13 @@ class Scenario
         foreach ($this->before as $scenario) {
             $tasks = array_merge($tasks, $scenario->getTasks());
         }
+
         return $tasks;
     }
 
     /**
      * Get after tasks names.
+     *
      * @return string[]
      */
     protected function getAfter()
@@ -83,6 +88,7 @@ class Scenario
         foreach ($this->after as $scenario) {
             $tasks = array_merge($tasks, $scenario->getTasks());
         }
+
         return $tasks;
     }
 }

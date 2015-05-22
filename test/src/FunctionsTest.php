@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -76,19 +78,19 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
 
     public function testLocalServer()
     {
-        localServer('main')->env('deploy_path', __DIR__ . '/localhost');
+        localServer('main')->env('deploy_path', __DIR__.'/localhost');
 
         $server = $this->deployer->servers->get('main');
         $env = $this->deployer->environments->get('main');
 
         $this->assertInstanceOf('Deployer\Server\ServerInterface', $server);
         $this->assertInstanceOf('Deployer\Server\Environment', $env);
-        $this->assertEquals(__DIR__ . '/localhost', $env->get('deploy_path'));
+        $this->assertEquals(__DIR__.'/localhost', $env->get('deploy_path'));
     }
 
     public function testServerList()
     {
-        serverList(__DIR__ . '/../fixture/servers.yml');
+        serverList(__DIR__.'/../fixture/servers.yml');
 
         foreach (['production', 'beta', 'test'] as $stage) {
             $server = $this->deployer->servers->get($stage);
@@ -143,7 +145,7 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
         $output = runLocally('echo "hello"');
 
         $this->assertInstanceOf('Deployer\Type\Result', $output);
-        $this->assertEquals('hello', (string)$output);
+        $this->assertEquals('hello', (string) $output);
     }
 
     public function testUpload()
@@ -156,13 +158,13 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
                     return is_file($local);
                 }),
                 $this->callback(function ($remote) {
-                    return is_file(str_replace('/home/www', __DIR__ . '/../fixture/app', $remote));
+                    return is_file(str_replace('/home/www', __DIR__.'/../fixture/app', $remote));
                 }));
 
         // Directory
-        upload(__DIR__ . '/../fixture/app', '/home/www');
+        upload(__DIR__.'/../fixture/app', '/home/www');
 
         // File
-        upload(__DIR__ . '/../fixture/app/README.md', '/home/www/README.md');
+        upload(__DIR__.'/../fixture/app/README.md', '/home/www/README.md');
     }
 }

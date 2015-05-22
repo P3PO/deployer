@@ -1,26 +1,29 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 use Deployer\Deployer;
-use Deployer\Server\Local;
-use Deployer\Server\Remote;
 use Deployer\Server\Builder;
 use Deployer\Server\Configuration;
 use Deployer\Server\Environment;
-use Deployer\Task\Task as TheTask;
+use Deployer\Server\Local;
+use Deployer\Server\Remote;
 use Deployer\Task\Context;
 use Deployer\Task\GroupTask;
 use Deployer\Task\Scenario\GroupScenario;
 use Deployer\Task\Scenario\Scenario;
+use Deployer\Task\Task as TheTask;
 use Deployer\Type\Result;
-use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 // There are two types of functions: Deployer dependent and Context dependent.
 // Deployer dependent function uses in definition stage of recipe and may require Deployer::get() method.
@@ -33,6 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @param string $name
  * @param string|null $host
  * @param int $port
+ *
  * @return Builder
  */
 function server($name, $host = null, $port = 22)
@@ -54,9 +58,9 @@ function server($name, $host = null, $port = 22)
     return new Builder($config, $env);
 }
 
-
 /**
  * @param string $name
+ *
  * @return Builder
  */
 function localServer($name)
@@ -73,16 +77,16 @@ function localServer($name)
     return new Builder($config, $env);
 }
 
-
 /**
  * Load server list file.
+ *
  * @param string $file
  */
 function serverList($file)
 {
     $serverList = Yaml::parse(file_get_contents($file));
 
-    foreach ((array)$serverList as $name => $config) {
+    foreach ((array) $serverList as $name => $config) {
         try {
             if (!is_array($config)) {
                 throw new \RuntimeException();
@@ -131,11 +135,9 @@ function serverList($file)
             foreach ($da->toArray() as $key => $value) {
                 $builder->env($key, $value);
             }
-
         } catch (\RuntimeException $e) {
             throw new \RuntimeException("Error in parsing `$file` file.");
         }
-
     }
 }
 
@@ -144,7 +146,9 @@ function serverList($file)
  *
  * @param string $name Name of current task.
  * @param callable|array $body Callable task or array of other tasks names.
+ *
  * @return TheTask
+ *
  * @throws InvalidArgumentException
  */
 function task($name, $body)
@@ -154,7 +158,7 @@ function task($name, $body)
     if ($body instanceof \Closure) {
         $task = new TheTask($body);
         $scenario = new Scenario($name);
-    } else if (is_array($body)) {
+    } elseif (is_array($body)) {
         $task = new GroupTask();
         $scenario = new GroupScenario(array_map(function ($name) use ($deployer) {
             return $deployer->scenarios->get($name);
@@ -270,6 +274,7 @@ function workingPath()
  * Run command on server.
  *
  * @param string $command
+ *
  * @return Result
  */
 function run($command)
@@ -299,9 +304,12 @@ function run($command)
 
 /**
  * Execute commands on local machine.
+ *
  * @param string $command Command to run locally.
  * @param int $timeout (optional) Override process command timeout in seconds.
+ *
  * @return Result Output of command.
+ *
  * @throws \RuntimeException
  */
 function runLocally($command, $timeout = 60)
@@ -333,8 +341,10 @@ function runLocally($command, $timeout = 60)
 
 /**
  * Upload file or directory to current server.
+ *
  * @param string $local
  * @param string $remote
+ *
  * @throws \RuntimeException
  */
 function upload($local, $remote)
@@ -342,13 +352,10 @@ function upload($local, $remote)
     $server = Context::get()->getServer();
 
     if (is_file($local)) {
-
         writeln("Upload file <info>$local</info> to <info>$remote</info>");
 
         $server->upload($local, $remote);
-
     } elseif (is_dir($local)) {
-
         writeln("Upload from <info>$local</info> to <info>$remote</info>");
 
         $finder = new Symfony\Component\Finder\Finder();
@@ -363,10 +370,9 @@ function upload($local, $remote)
         foreach ($files as $file) {
             $server->upload(
                 $file->getRealPath(),
-                $remote . '/' . $file->getRelativePathname()
+                $remote.'/'.$file->getRelativePathname()
             );
         }
-
     } else {
         throw new \RuntimeException("Uploading path '$local' does not exist.");
     }
@@ -386,6 +392,7 @@ function download($local, $remote)
 
 /**
  * Writes a message to the output and adds a newline at the end.
+ *
  * @param string|array $message
  */
 function writeln($message)
@@ -395,6 +402,7 @@ function writeln($message)
 
 /**
  * Writes a message to the output.
+ *
  * @param string $message
  */
 function write($message)
@@ -413,6 +421,7 @@ function set($key, $value)
 
 /**
  * @param string $key
+ *
  * @return mixed
  */
 function get($key)
@@ -422,7 +431,8 @@ function get($key)
 
 /**
  * @param string $key
- * @return boolean
+ *
+ * @return bool
  */
 function has($key)
 {
@@ -432,6 +442,7 @@ function has($key)
 /**
  * @param string $message
  * @param string|null $default
+ *
  * @return string
  * @codeCoverageIgnore
  */
@@ -443,7 +454,7 @@ function ask($message, $default = null)
 
     $helper = Deployer::get()->getHelper('question');
 
-    $message = "<question>$message" . (($default === null) ? "" : " [$default]") . "</question> ";
+    $message = "<question>$message".(($default === null) ? '' : " [$default]").'</question> ';
 
     $question = new \Symfony\Component\Console\Question\Question($message, $default);
 
@@ -453,6 +464,7 @@ function ask($message, $default = null)
 /**
  * @param string $message
  * @param bool $default
+ *
  * @return bool
  * @codeCoverageIgnore
  */
@@ -474,6 +486,7 @@ function askConfirmation($message, $default = false)
 
 /**
  * @param string $message
+ *
  * @return string
  * @codeCoverageIgnore
  */
@@ -502,7 +515,6 @@ function input()
     return Context::get()->getInput();
 }
 
-
 /**
  * @return OutputInterface
  */
@@ -519,7 +531,6 @@ function isQuiet()
     return OutputInterface::VERBOSITY_QUIET === output()->getVerbosity();
 }
 
-
 /**
  * @return bool
  */
@@ -528,7 +539,6 @@ function isVerbose()
     return OutputInterface::VERBOSITY_VERBOSE <= output()->getVerbosity();
 }
 
-
 /**
  * @return bool
  */
@@ -536,7 +546,6 @@ function isVeryVerbose()
 {
     return OutputInterface::VERBOSITY_VERY_VERBOSE <= output()->getVerbosity();
 }
-
 
 /**
  * @return bool
@@ -552,6 +561,7 @@ function isDebug()
  *
  * @param string|null $name
  * @param mixed $value
+ *
  * @return Environment|mixed
  */
 function env($name = null, $value = null)
@@ -561,12 +571,13 @@ function env($name = null, $value = null)
     } else {
         if (null === $name && null === $value) {
             return Context::get()->getEnvironment();
-        } else if (null !== $name && null === $value) {
+        } elseif (null !== $name && null === $value) {
             return Context::get()->getEnvironment()->get($name);
         } else {
             Context::get()->getEnvironment()->set($name, $value);
         }
-        return null;
+
+        return;
     }
 }
 
@@ -574,6 +585,7 @@ function env($name = null, $value = null)
  * Check if command exist in bash.
  *
  * @param string $command
+ *
  * @return bool
  */
 function commandExist($command)

@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -20,7 +22,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     {
         $result = new Result("str\n");
 
-        $this->assertEquals('str', (string)$result);
+        $this->assertEquals('str', (string) $result);
     }
 
     public function testToBool()
@@ -33,7 +35,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($result->toBool());
 
-        $result = new Result("not-true");
+        $result = new Result('not-true');
 
         $this->assertFalse($result->toBool());
     }

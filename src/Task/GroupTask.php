@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +20,7 @@ class GroupTask extends Task
     }
 
     /**
-     * {@inheritdoc
+     * {@inheritdoc.
      */
     public function run(Context $context)
     {

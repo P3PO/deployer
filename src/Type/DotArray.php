@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,18 +11,18 @@ namespace Deployer\Type;
 
 /**
  * DotArray
- * Allow access $array['abc.xyz'] same $array['abc']['xyz']
+ * Allow access $array['abc.xyz'] same $array['abc']['xyz'].
  *
  * Thank Glynn Forrest with https://github.com/glynnforrest/Crutches
  *
  * @author OanhNN <oanhnn@rikkeisoft.com>
+ *
  * @version 1.0
  */
 class DotArray implements \ArrayAccess
 {
-
     /**
-     * Storage array
+     * Storage array.
      *
      * @var array
      */
@@ -37,9 +39,10 @@ class DotArray implements \ArrayAccess
     }
 
     /**
-     * Validate key
+     * Validate key.
      *
      * @param string $key
+     *
      * @return bool
      */
     public static function validateKey($key)
@@ -48,10 +51,12 @@ class DotArray implements \ArrayAccess
     }
 
     /**
-     * Explode key by separator character (a dot character)
+     * Explode key by separator character (a dot character).
      *
      * @param string $key
+     *
      * @return array
+     *
      * @throws \RuntimeException
      */
     protected function explodeKey($key)
@@ -64,9 +69,10 @@ class DotArray implements \ArrayAccess
     }
 
     /**
-     * Check has key
+     * Check has key.
      *
      * @param string $key
+     *
      * @return bool
      */
     public function hasKey($key)
@@ -74,19 +80,19 @@ class DotArray implements \ArrayAccess
         $parts = $this->explodeKey($key);
         $count = count($parts) - 1;
         $cKey = array_pop($parts);
-        
+
         if (0 == $count) {
             $array = $this->array;
         } else {
             $pKey = implode('.', $parts);
             $array = $this->offsetGet($pKey);
         }
-        
+
         return is_array($array) && array_key_exists($cKey, $array);
     }
 
     /**
-     * Get all value as array
+     * Get all value as array.
      *
      * @return array
      */
@@ -97,9 +103,10 @@ class DotArray implements \ArrayAccess
 
     /**
      * Check exist key . Like isset(), a value of null is considered not set.
-     * isset($array['abc.xyz']) same isset($array['abc']['xyz'])
+     * isset($array['abc.xyz']) same isset($array['abc']['xyz']).
      *
      * @param string $key
+     *
      * @return bool
      */
     public function offsetExists($key)
@@ -109,9 +116,10 @@ class DotArray implements \ArrayAccess
 
     /**
      * Get an array value
-     * $array['abc.xyz'] same $array['abc']['xyz']
+     * $array['abc.xyz'] same $array['abc']['xyz'].
      *
      * @param string $key
+     *
      * @return mixed NULL will be returned if the key is not found.
      */
     public function offsetGet($key)
@@ -121,20 +129,20 @@ class DotArray implements \ArrayAccess
         $count = count($parts) - 1;
         for ($i = 0; $i < $count; $i++) {
             if (!isset($scope[$parts[$i]])) {
-                return null;
+                return;
             }
             $scope = &$scope[$parts[$i]];
         }
-        
+
         return isset($scope[$parts[$i]]) ? $scope[$parts[$i]] : null;
     }
 
     /**
      * Set an array value
-     * $array['abc.xyz'] = 'value' same $array['abc']['xyz'] = 'value'
+     * $array['abc.xyz'] = 'value' same $array['abc']['xyz'] = 'value'.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function offsetSet($key, $value)
     {
@@ -161,8 +169,8 @@ class DotArray implements \ArrayAccess
 
     /**
      * Unset an array value
-     * using unset($array['abc.xyz']) to unset($array['abc']['xyz'])
-     * 
+     * using unset($array['abc.xyz']) to unset($array['abc']['xyz']).
+     *
      * @param string $key
      */
     public function offsetUnset($key)

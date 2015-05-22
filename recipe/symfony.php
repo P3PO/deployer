@@ -1,13 +1,15 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-require_once __DIR__ . '/common.php';
+require_once __DIR__.'/common.php';
 
-/**
+/*
  * Symfony Configuration
  */
 
@@ -34,13 +36,12 @@ env('env', 'prod');
 set('bin_dir', 'app');
 set('var_dir', 'app');
 
-
-/**
+/*
  * Create cache dir
  */
 task('deploy:create_cache_dir', function () {
     // Set cache dir
-    env('cache_dir', '{{release_path}}/' . trim(get('var_dir'), '/') . '/cache');
+    env('cache_dir', '{{release_path}}/'.trim(get('var_dir'), '/').'/cache');
 
     // Remove cache dir if it exist
     run('if [ -d "{{cache_dir}}" ]; then rm -rf {{cache_dir}}; fi');
@@ -49,11 +50,10 @@ task('deploy:create_cache_dir', function () {
     run('mkdir -p {{cache_dir}}');
 
     // Set rights
-    run("chmod -R g+w {{cache_dir}}");
+    run('chmod -R g+w {{cache_dir}}');
 })->desc('Create cache dir');
 
-
-/**
+/*
  * Normalize asset timestamps
  */
 task('deploy:assets', function () {
@@ -66,50 +66,45 @@ task('deploy:assets', function () {
     run("find $assets -exec touch -t $time {} ';' &> /dev/null || true");
 })->desc('Normalize asset timestamps');
 
-
-/**
+/*
  * Dump all assets to the filesystem
  */
 task('deploy:assetic:dump', function () {
 
-    run('php {{release_path}}/' . trim(get('bin_dir'), '/') . '/console assetic:dump --env={{env}} --no-debug');
+    run('php {{release_path}}/'.trim(get('bin_dir'), '/').'/console assetic:dump --env={{env}} --no-debug');
 
 })->desc('Dump assets');
 
-
-/**
+/*
  * Warm up cache
  */
 task('deploy:cache:warmup', function () {
 
-    run('php {{release_path}}/' . trim(get('bin_dir'), '/') . '/console cache:warmup  --env={{env}} --no-debug');
+    run('php {{release_path}}/'.trim(get('bin_dir'), '/').'/console cache:warmup  --env={{env}} --no-debug');
 
 })->desc('Warm up cache');
 
-
-/**
+/*
  * Migrate database
  */
 task('database:migrate', function () {
 
-    run('php {{release_path}}/' . trim(get('bin_dir'), '/') . '/console doctrine:migrations:migrate --env={{env}} --no-debug --no-interaction');
+    run('php {{release_path}}/'.trim(get('bin_dir'), '/').'/console doctrine:migrations:migrate --env={{env}} --no-debug --no-interaction');
 
 })->desc('Migrate database');
 
-
-/**
+/*
  * Remove app_dev.php files
  */
 task('deploy:clear_controllers', function () {
 
-    run("rm -f {{release_path}}/web/app_*.php");
+    run('rm -f {{release_path}}/web/app_*.php');
 
 })->setPrivate();
 
 after('deploy:update_code', 'deploy:clear_controllers');
 
-
-/**
+/*
  * Main task
  */
 task('deploy', [

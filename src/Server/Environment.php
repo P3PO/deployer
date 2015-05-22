@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,16 +20,17 @@ class Environment
      *
      * @var \Deployer\Type\DotArray
      */
-    static private $defaults = null;
+    private static $defaults = null;
 
     /**
      * Array of env values.
+     *
      * @var \Deployer\Type\DotArray
      */
     private $values = null;
-    
+
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -35,7 +38,7 @@ class Environment
     }
 
     /**
-     * @param string $name
+     * @param string                $name
      * @param bool|int|string|array $value
      */
     public function set($name, $value)
@@ -44,9 +47,11 @@ class Environment
     }
 
     /**
-     * @param string $name
+     * @param string                $name
      * @param bool|int|string|array $default
+     *
      * @return bool|int|string|array
+     *
      * @throws \RuntimeException
      */
     public function get($name, $default = null)
@@ -76,6 +81,7 @@ class Environment
      * Checks if env var exists.
      *
      * @param string $name
+     *
      * @return bool
      */
     public function has($name)
@@ -85,6 +91,7 @@ class Environment
 
     /**
      * @param string $name
+     *
      * @return mixed
      */
     public static function getDefault($name)
@@ -92,12 +99,13 @@ class Environment
         if (null === self::$defaults) {
             self::$defaults = new DotArray();
         }
+
         return self::$defaults[$name];
     }
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     public static function setDefault($name, $value)
     {
@@ -111,6 +119,7 @@ class Environment
      * Parse env values.
      *
      * @param string $value
+     *
      * @return string
      */
     public function parse($value)
@@ -123,14 +132,14 @@ class Environment
     }
 
     /**
-     * Replace env values callback for parse
+     * Replace env values callback for parse.
      *
      * @param array $matches
+     *
      * @return mixed
      */
     private function parseCallback($matches)
     {
         return isset($matches[1]) ? $this->get($matches[1]) : null;
     }
-
 }

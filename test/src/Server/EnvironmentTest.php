@@ -1,10 +1,12 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
- 
+
 namespace Deployer\Server;
 
 class EnvironmentTest extends \PHPUnit_Framework_TestCase
@@ -30,7 +32,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
         $env->set('string', 'value');
         $env->set('array', [1, 'two']);
         $env->set('parse', 'is {{int}}');
-        
+
         $this->assertEquals(42, $env->get('int'));
         $this->assertEquals('value', $env->get('string'));
         $this->assertEquals([1, 'two'], $env->get('array'));

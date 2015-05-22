@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -7,8 +9,8 @@
 
 namespace Deployer\Server\Remote;
 
-use Deployer\Server\ServerInterface;
 use Deployer\Server\Configuration;
+use Deployer\Server\ServerInterface;
 use Ssh;
 
 class SshExtension implements ServerInterface
@@ -17,15 +19,17 @@ class SshExtension implements ServerInterface
      * @var Configuration
      */
     private $configuration;
-    
+
     /**
      * SSH session.
+     *
      * @var Ssh\Session
      */
     private $session;
 
     /**
      * Array of created directories during upload.
+     *
      * @var array
      */
     private $directories = [];
@@ -81,7 +85,7 @@ class SshExtension implements ServerInterface
             case Configuration::AUTH_BY_PEM_FILE:
 
                 throw new \RuntimeException('If you want to use pem file, switch to using PhpSecLib.');
-                
+
             case Configuration::AUTH_BY_AGENT:
 
                 throw new \RuntimeException('If you want to use forward agent function, switch to using PhpSecLib.');
@@ -141,7 +145,7 @@ class SshExtension implements ServerInterface
     {
         $this->checkConnection();
 
-        if(!$this->session->getSftp()->receive($remote, $local)) {
+        if (!$this->session->getSftp()->receive($remote, $local)) {
             throw new \RuntimeException('Can not download file.');
         }
     }

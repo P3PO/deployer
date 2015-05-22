@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -36,9 +38,7 @@ class SeriesExecutor implements ExecutorInterface
                         $informer->onServer($serverName);
 
                         try {
-                            
                             $task->run(new Context($server, $env, $input, $output));
-                            
                         } catch (NonFatalException $exception) {
                             $success = false;
                             $informer->taskException($serverName, 'Deployer\Task\NonFatalException', $exception->getMessage());

@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface as Output;
 
 class TaskCommand extends Command
 {
-
     /**
      * @var Deployer
      */
@@ -30,8 +31,8 @@ class TaskCommand extends Command
     public $executor;
 
     /**
-     * @param string $name
-     * @param string $description
+     * @param string   $name
+     * @param string   $description
      * @param Deployer $deployer
      */
     public function __construct($name, $description, Deployer $deployer)
@@ -42,7 +43,7 @@ class TaskCommand extends Command
     }
 
     /**
-     * Configures the command
+     * Configures the command.
      */
     protected function configure()
     {
@@ -69,16 +70,16 @@ class TaskCommand extends Command
         $servers = [];
 
         if (!empty($stage)) {
-            
+
             // Look for servers which has in env `stages` current stage name.
-            foreach($this->deployer->environments as $name => $env) {
+            foreach ($this->deployer->environments as $name => $env) {
                 // If server does not have any stage category, skip them
                 if (in_array($stage, $env->get('stages', []), true)) {
                     $servers[$name] = $this->deployer->servers->get($name);
                 }
             }
-            
-            // If still is empty, try to find server by name. 
+
+            // If still is empty, try to find server by name.
             if (empty($servers)) {
                 if ($this->deployer->servers->has($stage)) {
                     $servers = [$stage => $this->deployer->servers->get($stage)];
@@ -87,10 +88,9 @@ class TaskCommand extends Command
                     throw new \RuntimeException("Stage or server `$stage` does not found.");
                 }
             }
-            
         } else {
             // Otherwise run on all servers what does not specify stage.
-            foreach($this->deployer->environments as $name => $env) {
+            foreach ($this->deployer->environments as $name => $env) {
                 if (!$env->has('stages')) {
                     $servers[$name] = $this->deployer->servers->get($name);
                 }

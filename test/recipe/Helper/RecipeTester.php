@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -31,7 +33,7 @@ abstract class RecipeTester extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         // Prepare FS
-        self::$deployPath = __DIR__ . '/../../localhost';
+        self::$deployPath = __DIR__.'/../../localhost';
         self::cleanUp();
         mkdir(self::$deployPath);
         self::$deployPath = realpath(self::$deployPath);
@@ -59,7 +61,6 @@ abstract class RecipeTester extends \PHPUnit_Framework_TestCase
         $this->deployer->addConsoleCommands();
     }
 
-
     public static function tearDownAfterClass()
     {
         self::cleanUp();
@@ -71,7 +72,7 @@ abstract class RecipeTester extends \PHPUnit_Framework_TestCase
     protected static function cleanUp()
     {
         if (is_dir(self::$deployPath)) {
-            exec('rm -rf ' . self::$deployPath);
+            exec('rm -rf '.self::$deployPath);
         }
     }
 
@@ -79,8 +80,9 @@ abstract class RecipeTester extends \PHPUnit_Framework_TestCase
      * Execute command with tester.
      *
      * @param string $command
-     * @param array $args
-     * @param array $options
+     * @param array  $args
+     * @param array  $options
+     *
      * @return string Display result.
      */
     protected function exec($command, $args = [], $options = [])
@@ -95,14 +97,13 @@ abstract class RecipeTester extends \PHPUnit_Framework_TestCase
 
     /**
      * Load or describe recipe.
-     *
-     * @return void
      */
     abstract protected function loadRecipe();
 
     /**
      * @param string $name
      * @param string $server
+     *
      * @return string
      */
     protected function getEnv($name, $server = 'localhost')

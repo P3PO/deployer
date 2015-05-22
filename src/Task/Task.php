@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,30 +13,35 @@ class Task
 {
     /**
      * Task code.
+     *
      * @var callable
      */
     private $callback;
 
     /**
      * Task description.
+     *
      * @var string
      */
     private $description;
 
     /**
      * Should run this task only once and locally?
+     *
      * @var bool
      */
     private $once = false;
 
     /**
      * List of servers names there this task should be executed.
-     * @var array  Key contains server names.
+     *
+     * @var array Key contains server names.
      */
     private $onlyOn = [];
 
     /**
-     * Make task internal and not visible in CLI. 
+     * Make task internal and not visible in CLI.
+     *
      * @var bool
      */
     private $private = false;
@@ -49,7 +56,7 @@ class Task
 
     /**
      * Run task.
-     * 
+     *
      * @param Context $context
      */
     public function run(Context $context)
@@ -83,22 +90,27 @@ class Task
 
     /**
      * Set task description.
+     *
      * @param string $description
+     *
      * @return $this
      */
     public function desc($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
      * Set this task local and run only once.
+     *
      * @return $this
      */
     public function once()
     {
         $this->once = true;
+
         return $this;
     }
 
@@ -112,11 +124,13 @@ class Task
 
     /**
      * @param array $servers
+     *
      * @return $this
      */
     public function onlyOn($servers)
     {
         $this->onlyOn = array_flip($servers);
+
         return $this;
     }
 
@@ -127,10 +141,12 @@ class Task
     {
         return $this->onlyOn;
     }
-    
+
     /**
      * Decide to run or not to run on this server.
+     *
      * @param string $serverName
+     *
      * @return bool
      */
     public function runOnServer($serverName)
@@ -143,7 +159,7 @@ class Task
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isPrivate()
     {

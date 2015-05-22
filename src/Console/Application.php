@@ -1,5 +1,7 @@
 <?php
-/* (c) Anton Medvedev <anton@elfet.ru>
+
+/*
+ * (c) Anton Medvedev <anton@elfet.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,11 +19,11 @@ class Application extends Console
 {
     /**
      * Input definition for user specific arguments and options.
-     * 
+     *
      * @var InputDefinition
      */
     private $userDefinition;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -43,6 +45,7 @@ class Application extends Console
     {
         $commands = parent::getDefaultCommands();
         $commands[] = $this->selfUpdateCommand();
+
         return $commands;
     }
 
@@ -54,6 +57,7 @@ class Application extends Console
         $selfUpdate = new Command('self-update');
         $selfUpdate->setDescription('Updates deployer.phar to the latest version');
         $selfUpdate->setManifestUri('http://deployer.org/manifest.json');
+
         return $selfUpdate;
     }
 
@@ -64,6 +68,7 @@ class Application extends Console
     {
         $helperSet = parent::getDefaultHelperSet();
         $helperSet->set(new Helper());
+
         return $helperSet;
     }
 
@@ -75,7 +80,7 @@ class Application extends Console
         if (null === $this->userDefinition) {
             $this->userDefinition = new InputDefinition();
         }
-        
+
         return $this->userDefinition;
     }
 
